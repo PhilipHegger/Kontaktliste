@@ -35,11 +35,25 @@ function formularLeeren() {
     telefonInput.value = '';
 }
 
-// Funktion zur Anzeige aller Kontakte
-function kontakteAnzeigen() {
+// Kontakte anhand von Name oder E-Mail filtern
+function kontakteFiltern(suchbegriff) {
+    if (!suchbegriff) {
+        return kontakte;
+    }
+
+    return kontakte.filter(kontakt =>
+        kontakt.name.toLowerCase().includes(suchbegriff.toLowerCase()) ||
+        kontakt.email.toLowerCase().includes(suchbegriff.toLowerCase())
+    );
+}
+
+// Kontakte anzeigen; ein Suchbegriff schränkt die Anzeige ein
+function kontakteAnzeigen(suchbegriff = '') {
     kontaktListe.innerHTML = '';
 
-    kontakte.forEach(function(kontakt) {
+    const gefilterteKontakte = kontakteFiltern(suchbegriff);
+
+    gefilterteKontakte.forEach(function(kontakt) {
         const kontaktDiv = document.createElement('div');
         kontaktDiv.className = 'kontakt-item';
         kontaktDiv.innerHTML = `
@@ -50,11 +64,15 @@ function kontakteAnzeigen() {
         `;
         kontaktListe.appendChild(kontaktDiv);
     });
+
+    if (gefilterteKontakte.length === 0) {
+        kontaktListe.innerHTML = '<p>Keine Kontakte gefunden.</p>';
+    }
 }
 
 // Funktion zum Löschen eines Kontakts
 function kontaktLoeschen(id) {
     kontakte = kontakte.filter(kontakt => kontakt.id !== id);
     kontakteAnzeigen();
-
 }
+
